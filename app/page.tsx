@@ -171,7 +171,7 @@ export default function Home() {
 
 function VideoCard({ video, onOpen }: { video: Video; onOpen: () => void }) {
   return (
-    <button className={`video-card ${video.live ? "is-live" : ""}`} onClick={onOpen}>
+    <button className={`video-card ${video.live ? "is-live" : ""}`} onClick={() => video.live ? onOpen() : window.location.href = `/watch/${video.id}`}>
       <div className="thumbnail" style={{ "--thumb-gradient": video.gradient } as CSSProperties}>
         <span className="thumbnail-accent">{video.accent}</span><div className="thumbnail-shine" />
         {video.live ? <><span className="live-badge">● LIVE</span><span className="watching-badge">{video.watching} watching</span></> : <span className="duration">{video.duration}</span>}
