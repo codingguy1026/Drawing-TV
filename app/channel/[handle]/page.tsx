@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import styles from "./channel.module.css";
+import vhsStyles from "./vhs-upgrade.module.css";
 
 type ThemeId = "modern" | "analog" | "vhs" | "newsroom";
 
@@ -59,7 +60,7 @@ export default function ChannelPage() {
   };
 
   return (
-    <main className={`${styles.page} ${styles[theme]}`}>
+    <main className={`${styles.page} ${styles[theme]} ${theme === "vhs" ? vhsStyles.vhsEnhanced : ""}`}>
       <div className={styles.scanlines} aria-hidden="true" />
       <div className={styles.noise} aria-hidden="true" />
 
