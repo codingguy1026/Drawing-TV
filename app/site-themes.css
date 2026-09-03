@@ -1,0 +1,88 @@
+/* DTV site-wide broadcast themes */
+
+.site-theme-control{position:relative;display:flex;align-items:center}.site-theme-trigger{height:42px;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:0 12px;border:1px solid rgba(255,255,255,.09);border-radius:13px;background:rgba(255,255,255,.045);color:#dddde4;font-size:12px;font-weight:850;cursor:pointer;transition:.18s ease}.site-theme-trigger:hover,.site-theme-trigger[aria-expanded="true"]{background:rgba(255,255,255,.09);color:white;border-color:rgba(255,255,255,.16)}.site-theme-trigger.compact{width:42px;padding:0}.site-theme-gear{font-size:17px;line-height:1}.site-theme-menu{position:absolute;top:50px;right:0;z-index:120;width:min(365px,calc(100vw - 24px));padding:17px;border:1px solid rgba(255,255,255,.12);border-radius:21px;background:rgba(16,16,20,.98);box-shadow:0 28px 90px rgba(0,0,0,.58),inset 0 1px 0 rgba(255,255,255,.04);backdrop-filter:blur(24px) saturate(140%);color:#f7f7f8}.site-theme-menu-head{display:flex;align-items:flex-start;justify-content:space-between}.site-theme-menu-head>div{display:flex;flex-direction:column;gap:3px}.site-theme-menu-head small{color:#ff5573;font-size:9px;font-weight:950;letter-spacing:.16em}.site-theme-menu-head strong{font-size:19px}.site-theme-menu-head>button{width:32px;height:32px;border:0;border-radius:9px;background:transparent;color:#8f8f98;font-size:21px;cursor:pointer}.site-theme-menu-head>button:hover{background:rgba(255,255,255,.07);color:white}.site-theme-menu>p{margin:11px 0 13px;color:#85858e;font-size:11px;line-height:1.5}.site-theme-options{display:grid;gap:7px}.site-theme-options>button{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:8px;width:100%;padding:11px;border:1px solid rgba(255,255,255,.075);border-radius:13px;background:#18181d;color:#eeeef1;text-align:left;cursor:pointer}.site-theme-options>button:hover{background:#202026}.site-theme-options>button.active{border-color:#ff4667;background:rgba(255,49,85,.09)}.site-theme-icon{font-size:18px;text-align:center}.site-theme-copy{display:flex;min-width:0;flex-direction:column;gap:2px}.site-theme-copy strong{font-size:12px}.site-theme-copy small{color:#85858e;font-size:10px}.site-theme-options>button>b{color:#ff5573}.site-theme-current{margin-top:13px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08);color:#72727a;font-size:10px}.site-theme-current strong{float:right;color:#f5f5f7}
+
+/* Modern is the default language. */
+html[data-dtv-theme="modern"]{color-scheme:dark}
+
+/* Analog: warm CRT broadcast station. */
+html[data-dtv-theme="analog"]{--bg:#17150f;--surface:#211e15;--surface-2:#2b271b;--line:rgba(240,230,189,.14);--text:#f0e6bd;--muted:#a99f79;--red:#e4b951;--purple:#ad6e38;color-scheme:dark}
+html[data-dtv-theme="analog"] body{background:radial-gradient(circle at 80% 0%,rgba(228,185,81,.10),transparent 28rem),#17150f;color:#f0e6bd;font-family:"Courier New",monospace}
+html[data-dtv-theme="analog"] body::after{content:"";position:fixed;inset:0;z-index:200;pointer-events:none;opacity:.24;background:repeating-linear-gradient(to bottom,transparent 0 3px,rgba(255,245,205,.045) 3px 4px)}
+html[data-dtv-theme="analog"] .topbar,html[data-dtv-theme="analog"] .sidebar{background:rgba(23,21,15,.96);border-color:#3b3625;backdrop-filter:none}
+html[data-dtv-theme="analog"] .brand-play{background:#e4b951;color:#221d10;border-radius:3px;box-shadow:0 0 18px rgba(228,185,81,.24)}
+html[data-dtv-theme="analog"] .search{border-color:#49412b;border-radius:4px;background:#211e15}
+html[data-dtv-theme="analog"] .search-submit,html[data-dtv-theme="analog"] .category-row button,html[data-dtv-theme="analog"] .side-item.active{background:#2b271b;color:#e8dbaf}
+html[data-dtv-theme="analog"] .category-row{background:linear-gradient(180deg,#17150f 60%,rgba(23,21,15,0))}
+html[data-dtv-theme="analog"] .category-row button{border:1px solid #3c3625;border-radius:3px}
+html[data-dtv-theme="analog"] .category-row button.active{background:#e4b951;color:#211e15;border-color:#e4b951}
+html[data-dtv-theme="analog"] .welcome-strip{border-radius:12px;border:2px solid #3b3625;background:radial-gradient(circle at 72% 38%,rgba(228,185,81,.14),transparent 24rem),linear-gradient(135deg,#292416,#17150f 72%);box-shadow:inset 0 0 75px rgba(0,0,0,.45)}
+html[data-dtv-theme="analog"] .welcome-strip h1 strong,html[data-dtv-theme="analog"] .live-text,html[data-dtv-theme="analog"] .eyebrow{color:#e4b951}
+html[data-dtv-theme="analog"] .signal-screen{border-radius:38px;border-color:#4a422d;background:radial-gradient(circle,#4a4021,#16140e 70%);box-shadow:inset 0 0 70px #000}
+html[data-dtv-theme="analog"] .video-card .thumbnail,html[data-dtv-theme="analog"] .clip-art{border-radius:8px;filter:saturate(.7) sepia(.16)}
+html[data-dtv-theme="analog"] .upload-button{border-radius:4px;background:#e4b951;color:#211e15}.site-theme-menu{transition:background .15s ease}
+html[data-dtv-theme="analog"] .site-theme-menu{border-radius:8px;border-color:#49412b;background:#211e15;color:#f0e6bd;font-family:"Courier New",monospace}
+html[data-dtv-theme="analog"] .site-theme-options>button{border-radius:4px;border-color:#3b3625;background:#282416;color:#f0e6bd}
+html[data-dtv-theme="analog"] .site-theme-options>button.active{border-color:#e4b951;background:#332c17}
+html[data-dtv-theme="analog"] .site-theme-menu-head small,html[data-dtv-theme="analog"] .site-theme-options>button>b{color:#e4b951}
+
+/* VHS: the whole service becomes a camcorder tape interface. */
+html[data-dtv-theme="vhs"]{--bg:#070807;--surface:#111210;--surface-2:#181a17;--line:rgba(224,232,211,.14);--text:#eef0e8;--muted:#a5aa9d;--red:#ff486e;--purple:#35dac7;color-scheme:dark}
+html[data-dtv-theme="vhs"] body{background:#070807;color:#eef0e8;font-family:"Courier New",monospace;text-shadow:.6px 0 rgba(255,72,110,.18),-.6px 0 rgba(53,218,199,.13)}
+html[data-dtv-theme="vhs"] body::before{content:"PLAY ▶   SP\A00:12:44";white-space:pre;position:fixed;left:18px;bottom:18px;z-index:190;pointer-events:none;color:rgba(238,240,232,.48);font:700 10px/1.5 "Courier New",monospace;letter-spacing:.08em}
+html[data-dtv-theme="vhs"] body::after{content:"";position:fixed;inset:0;z-index:200;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0 2px,rgba(255,255,255,.035) 2px 3px);opacity:.55;animation:siteVhsJitter .22s steps(2) infinite}
+html[data-dtv-theme="vhs"] .topbar{height:72px;border-bottom:2px solid #353832;background:#080908;backdrop-filter:none;box-shadow:0 3px 0 rgba(255,72,110,.05)}
+html[data-dtv-theme="vhs"] .topbar::after{content:"● REC   SP";position:absolute;left:50%;bottom:5px;transform:translateX(-50%);color:#ff486e;font-size:8px;font-weight:900;letter-spacing:.14em}
+html[data-dtv-theme="vhs"] .sidebar{background:#0a0b0a;border-right:2px solid #30332e;backdrop-filter:none}
+html[data-dtv-theme="vhs"] .brand{font-family:"Courier New",monospace;text-shadow:2px 0 #ff486e,-2px 0 #35dac7}
+html[data-dtv-theme="vhs"] .brand-play{border-radius:0;background:#eef0e8;color:#080908;box-shadow:2px 0 #ff486e,-2px 0 #35dac7}
+html[data-dtv-theme="vhs"] .search{height:42px;border:2px solid #373a34;border-radius:0;background:#0d0e0d;box-shadow:inset 0 0 18px #000}
+html[data-dtv-theme="vhs"] .search-submit{background:#1c1e1b;border-left:2px solid #373a34;font-family:"Courier New",monospace}
+html[data-dtv-theme="vhs"] .upload-button,html[data-dtv-theme="vhs"] .icon-button,html[data-dtv-theme="vhs"] .profile-button,html[data-dtv-theme="vhs"] .site-theme-trigger{border-radius:2px}
+html[data-dtv-theme="vhs"] .upload-button{background:#eef0e8;color:#090a09;box-shadow:3px 3px 0 #373a34}
+html[data-dtv-theme="vhs"] .category-row{background:linear-gradient(180deg,#070807 68%,rgba(7,8,7,0))}
+html[data-dtv-theme="vhs"] .category-row button{border:1px solid #343731;border-radius:0;background:#111210;color:#aaaFA5;font-family:"Courier New",monospace}
+html[data-dtv-theme="vhs"] .category-row button.active{background:#eef0e8;color:#080908}
+html[data-dtv-theme="vhs"] .welcome-strip{min-height:390px;border:10px solid #171917;border-radius:4px;outline:2px solid #3b3e38;background:linear-gradient(135deg,#091513,#171019 48%,#080908);box-shadow:inset 0 0 110px rgba(0,0,0,.72),8px 8px 0 #030403}
+html[data-dtv-theme="vhs"] .welcome-strip::before{content:"TAPE 01   00:12:44   SP";position:absolute;top:16px;right:18px;z-index:3;color:#d7dacd;font-size:10px;font-weight:800;letter-spacing:.12em}
+html[data-dtv-theme="vhs"] .welcome-strip h1{font-family:"Courier New",monospace;text-transform:uppercase;text-shadow:3px 0 #ff486e,-3px 0 #35dac7}
+html[data-dtv-theme="vhs"] .welcome-strip h1 strong{color:#eef0e8}
+html[data-dtv-theme="vhs"] .eyebrow{color:#35dac7}.site-theme-gear{display:inline-block}
+html[data-dtv-theme="vhs"] .signal-screen{border:8px solid #1a1c19;border-radius:3px;outline:2px solid #42453e;background:linear-gradient(135deg,#071514,#1b101a);box-shadow:inset 0 0 55px #000,4px 4px 0 #030403}
+html[data-dtv-theme="vhs"] .signal-screen::after{content:"TRACKING";position:absolute;left:12px;bottom:8px;color:#35dac7;font:800 8px "Courier New",monospace;letter-spacing:.16em}
+html[data-dtv-theme="vhs"] .video-card .thumbnail,html[data-dtv-theme="vhs"] .clip-art{border:5px solid #171917;border-radius:2px;outline:1px solid #343731;filter:saturate(.75) contrast(1.08);box-shadow:4px 4px 0 #040504}
+html[data-dtv-theme="vhs"] .video-card .thumbnail::after{content:"PLAY ▶";position:absolute;left:8px;top:8px;color:rgba(255,255,255,.75);font:800 9px "Courier New",monospace;letter-spacing:.08em}
+html[data-dtv-theme="vhs"] .video-copy h3,html[data-dtv-theme="vhs"] .clip-card strong{font-family:"Courier New",monospace}
+html[data-dtv-theme="vhs"] .side-item,html[data-dtv-theme="vhs"] .subscription{border-radius:1px}
+html[data-dtv-theme="vhs"] .side-item.active{background:#eef0e8;color:#080908}
+html[data-dtv-theme="vhs"] .footer{border-top:2px solid #30332e}
+html[data-dtv-theme="vhs"] .site-theme-menu{border:3px solid #343731;border-radius:2px;background:#0b0c0b;box-shadow:7px 7px 0 #030403;color:#eef0e8;font-family:"Courier New",monospace}
+html[data-dtv-theme="vhs"] .site-theme-menu::before{content:"MENU / OSD";display:block;margin-bottom:8px;color:#35dac7;font-size:8px;letter-spacing:.16em}
+html[data-dtv-theme="vhs"] .site-theme-options>button{border-radius:0;border-color:#343731;background:#111210;color:#eef0e8}
+html[data-dtv-theme="vhs"] .site-theme-options>button.active{border-color:#35dac7;background:#10201d}
+html[data-dtv-theme="vhs"] .site-theme-menu-head small,html[data-dtv-theme="vhs"] .site-theme-options>button>b{color:#35dac7}
+
+/* Newsroom: network-blue, breaking-news visual system. */
+html[data-dtv-theme="newsroom"]{--bg:#06101f;--surface:#0b1930;--surface-2:#10213e;--line:rgba(110,157,230,.18);--text:#f6f8ff;--muted:#9fb0cf;--red:#f43b4f;--purple:#2c7cff;color-scheme:dark}
+html[data-dtv-theme="newsroom"] body{background:radial-gradient(circle at 65% -10%,rgba(44,124,255,.18),transparent 32rem),#06101f;color:#f6f8ff}
+html[data-dtv-theme="newsroom"] .topbar{background:rgba(5,15,31,.96);border-bottom:2px solid #183667}
+html[data-dtv-theme="newsroom"] .brand-play{background:#f43b4f;box-shadow:none}
+html[data-dtv-theme="newsroom"] .sidebar{background:#071327;border-right-color:#183667}
+html[data-dtv-theme="newsroom"] .search{border-color:#1c3b6b;background:#0a1830}
+html[data-dtv-theme="newsroom"] .category-row{background:linear-gradient(180deg,#06101f 66%,rgba(6,16,31,0))}
+html[data-dtv-theme="newsroom"] .category-row button{background:#0d1e39;border-radius:4px}
+html[data-dtv-theme="newsroom"] .category-row button.active{background:#f5f8ff;color:#07101f}
+html[data-dtv-theme="newsroom"] .welcome-strip{border-radius:8px;border-color:#20477f;background:linear-gradient(120deg,#07142d,#0d326d 58%,#071529);box-shadow:inset 0 -5px 0 #f43b4f}
+html[data-dtv-theme="newsroom"] .welcome-strip::before{content:"DTV NEWS NETWORK  •  LIVE DESK";position:absolute;left:0;right:0;bottom:0;z-index:4;padding:7px 18px;background:#f43b4f;color:white;font-size:9px;font-weight:950;letter-spacing:.13em}
+html[data-dtv-theme="newsroom"] .welcome-strip h1 strong{color:#77aaff}
+html[data-dtv-theme="newsroom"] .signal-screen{border-radius:6px;border-color:#214a85;background:linear-gradient(135deg,#082154,#0d396a 55%,#071225)}
+html[data-dtv-theme="newsroom"] .video-card .thumbnail,html[data-dtv-theme="newsroom"] .clip-art{border-radius:6px;box-shadow:inset 0 -4px 0 rgba(44,124,255,.35)}
+html[data-dtv-theme="newsroom"] .upload-button{border-radius:4px;background:#f6f8ff;color:#07101f}
+html[data-dtv-theme="newsroom"] .site-theme-menu{border-radius:8px;border-color:#214a85;background:#08172d;color:#f6f8ff}
+html[data-dtv-theme="newsroom"] .site-theme-menu-head small,html[data-dtv-theme="newsroom"] .site-theme-options>button>b{color:#70a5ff}
+html[data-dtv-theme="newsroom"] .site-theme-options>button{border-radius:5px;border-color:#17365f;background:#0d1e39;color:#f6f8ff}
+html[data-dtv-theme="newsroom"] .site-theme-options>button.active{border-color:#70a5ff;background:#102b52}
+
+@keyframes siteVhsJitter{0%{transform:translateY(0)}50%{transform:translateY(.7px)}100%{transform:translateY(-.5px)}}
+
+@media(max-width:900px){.site-theme-trigger:not(.compact) span:not(.site-theme-gear){display:none}.site-theme-trigger:not(.compact){width:42px;padding:0}.site-theme-menu{position:fixed;top:68px;right:8px;width:calc(100vw - 16px)}}
