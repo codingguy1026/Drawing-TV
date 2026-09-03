@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, type CSSProperties } from "react";
+import NotificationPanel from "./components/NotificationPanel";
 
 type Video = {
   id: number;
@@ -178,6 +179,8 @@ export default function Home() {
   const [category, setCategory] = useState("전체");
   const [query, setQuery] = useState("");
   const [notice, setNotice] = useState<string | null>(null);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(true);
 
   const filteredVideos = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -216,10 +219,24 @@ export default function Home() {
 
         <div className="top-actions">
           <button className="upload-button" onClick={() => showNotice("업로드 스튜디오는 다음 단계에서 연결할게요 📼")}>＋ <span>업로드</span></button>
-          <button className="icon-button notification-button" aria-label="알림" onClick={() => showNotice("새 알림이 없습니다 🔔")}>♢<span className="notification-dot" /></button>
+          <button
+            className="icon-button notification-button"
+            aria-label="알림"
+            aria-expanded={notificationsOpen}
+            onClick={() => setNotificationsOpen((value) => !value)}
+          >
+            ♢
+            {hasUnreadNotifications && <span className="notification-dot" />}
+          </button>
           <button className="profile-button" aria-label="프로필" onClick={() => showNotice("프로필 페이지 준비 중 👤")}>D</button>
         </div>
       </header>
+
+      <NotificationPanel
+        open={notificationsOpen}
+        onClose={() => setNotificationsOpen(false)}
+        onUnreadChange={setHasUnreadNotifications}
+      />
 
       <aside className={`sidebar ${sidebarOpen ? "open" : "closed"}`}>
         <nav>
