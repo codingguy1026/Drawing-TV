@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import SiteThemeMenu from "../../components/SiteThemeMenu";
 import { useDtvTheme } from "../../components/ThemeProvider";
@@ -50,6 +50,7 @@ export default function WatchPage() {
   const { theme } = useDtvTheme();
   const video = useMemo(() => catalog.find((item) => item.id === params?.id) ?? catalog[0], [params?.id]);
   const recommendations = useMemo(() => catalog.filter((item) => item.id !== video.id).slice(0, 6), [video.id]);
+  const playerFrameRef = useRef<HTMLDivElement>(null);
 
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
@@ -58,7 +59,22 @@ export default function WatchPage() {
   const [saved, setSaved] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
   const [descriptionOpen, setDescriptionOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    const syncFullscreen = () => {
+      const fullscreenElement = document.fullscreenElement ?? (document as Document & { webkitFullscreenElement?: Element }).webkitFullscreenElement;
+      setIsFullscreen(fullscreenElement === playerFrameRef.current);
+    };
+
+    document.addEventListener("fullscreenchange", syncFullscreen);
+    document.addEventListener("webkitfullscreenchange", syncFullscreen);
+    return () => {
+      document.removeEventListener("fullscreenchange", syncFullscreen);
+      document.removeEventListener("webkitfullscreenchange", syncFullscreen);
+    };
+  }, []);
 
   const notify = (message: string) => {
     setToast(message);
@@ -68,6 +84,38 @@ export default function WatchPage() {
   const jumpTo = (seconds: number) => {
     setPosition(Math.min(seconds, video.duration));
     setPlaying(true);
+  };
+
+  const toggleFullscreen = async () => {
+    const frame = playerFrameRef.current;
+    if (!frame) return;
+
+    const fullscreenElement = document.fullscreenElement ?? (document as Document & { webkitFullscreenElement?: Element }).webkitFullscreenElement;
+
+    try {
+      if (fullscreenElement) {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else {
+          const legacyDocument = document as Document & { webkitExitFullscreen?: () => Promise<void> | void };
+          await legacyDocument.webkitExitFullscreen?.();
+        }
+        return;
+      }
+
+      if (frame.requestFullscreen) {
+        await frame.requestFullscreen();
+      } else {
+        const legacyFrame = frame as HTMLDivElement & { webkitRequestFullscreen?: () => Promise<void> | void };
+        if (legacyFrame.webkitRequestFullscreen) {
+          await legacyFrame.webkitRequestFullscreen();
+        } else {
+          notify("이 브라우저는 전체화면을 지원하지 않아요.");
+        }
+      }
+    } catch {
+      notify("전체화면 전환에 실패했어요. 브라우저 권한을 확인해 주세요.");
+    }
   };
 
   return (
@@ -89,8 +137,23 @@ export default function WatchPage() {
 
       <div className={styles.shell}>
         <section className={styles.mainColumn}>
-          <div className={styles.playerFrame}>
-            <div className={styles.player} style={{ background: video.gradient }} onClick={() => setPlaying((value) => !value)}>
+          <div
+            ref={playerFrameRef}
+            className={styles.playerFrame}
+            style={isFullscreen ? { width: "100vw", height: "100vh", display: "flex", flexDirection: "column", borderRadius: 0 } : undefined}
+          >
+            <div
+              className={styles.player}
+              style={{
+                background: video.gradient,
+                ...(isFullscreen ? { flex: "1 1 auto", minHeight: 0, aspectRatio: "auto" } : {}),
+              }}
+              onClick={() => setPlaying((value) => !value)}
+              onDoubleClick={(event) => {
+                event.stopPropagation();
+                void toggleFullscreen();
+              }}
+            >
               <div className={styles.scanlines} aria-hidden="true" />
               <div className={styles.playerOsd}>
                 <span>{theme === "vhs" ? "PLAY   SP" : theme === "analog" ? "CH 1026 · STEREO" : theme === "newsroom" ? "DTV NEWS FEED" : "DTV PLAYER"}</span>
@@ -110,8 +173,8 @@ export default function WatchPage() {
               <button type="button" onClick={() => setMuted((value) => !value)}>{muted ? "🔇" : "🔊"}</button>
               <span>{formatTime(position)} / {video.durationLabel}</span>
               <input aria-label="재생 위치" type="range" min={0} max={video.duration} value={position} onChange={(event) => setPosition(Number(event.target.value))} />
+              <button type="button" aria-label={isFullscreen ? "전체화면 종료" : "전체화면"} title={isFullscreen ? "전체화면 종료" : "전체화면"} onClick={() => void toggleFullscreen()}>{isFullscreen ? "↙" : "⛶"}</button>
               <button type="button" onClick={() => notify("화질: 1080p (프로토타입)")}>HD</button>
-              <button type="button" onClick={() => notify("전체화면은 실제 플레이어 연결 때 활성화됩니다.")}>⛶</button>
             </div>
           </div>
 
