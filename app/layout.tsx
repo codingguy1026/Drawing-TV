@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./site-themes.css";
+import "./platform.css";
 import ThemeProvider from "./components/ThemeProvider";
+import PlatformLauncher from "./components/PlatformLauncher";
 
 export const metadata: Metadata = {
   title: "DTV | Your channel. Your broadcast.",
@@ -24,11 +26,9 @@ const themeBootScript = `
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ko" data-dtv-theme="modern" suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
-      </head>
+      <head><script dangerouslySetInnerHTML={{ __html: themeBootScript }} /></head>
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>{children}<PlatformLauncher /></ThemeProvider>
       </body>
     </html>
   );
