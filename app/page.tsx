@@ -70,7 +70,7 @@ export default function Home() {
     setDock(label);
     if (label === "홈") window.scrollTo({ top: 0, behavior: "smooth" });
     else if (label === "LIVE") document.getElementById("on-air")?.scrollIntoView({ behavior: "smooth" });
-    else if (label === "클립") document.getElementById("clips")?.scrollIntoView({ behavior: "smooth" });
+    else if (label === "클립") window.location.href = "/clips";
     else if (label === "채널") document.getElementById("channels")?.scrollIntoView({ behavior: "smooth" });
     else showNotice("MY 페이지는 다음 단계에서 연결할게요 ◎");
   };
@@ -80,9 +80,11 @@ export default function Home() {
       <style>{homeStyles}</style>
 
       <header className="d2-topbar">
-        <a href="#top" className="d2-brand" aria-label="DTV 홈">
-          <span className="d2-brand-mark">D</span><span className="d2-brand-tv">TV</span><i>● SIGNAL ON</i>
-        </a>
+        <div className="d2-brand-wrap">
+          <a href="#top" className="d2-brand" aria-label="DTV 홈">
+            <span className="d2-brand-mark">D</span><span className="d2-brand-tv">TV</span><i>● SIGNAL ON</i>
+          </a>
+        </div>
 
         <button className="d2-search-trigger" onClick={() => setSearchOpen(true)}>
           <span>⌕</span><b>무엇을 보고 싶어?</b><kbd>⌘ K</kbd>
@@ -164,11 +166,11 @@ export default function Home() {
         <section className="d2-section" id="clips">
           <div className="d2-section-head">
             <div><span className="d2-kicker purple">FLASH SIGNALS</span><h2>지금 이 장면이 뜬다</h2></div>
-            <button className="d2-link" onClick={() => showNotice("다음 신호 피드는 다음 단계에서 연결할게요 ▷")}>클립 신호 열기 →</button>
+            <button className="d2-link" onClick={() => { window.location.href = "/clips"; }}>클립 신호 열기 →</button>
           </div>
           <div className="d2-clips">
             {clips.map((clip, index) => (
-              <button key={clip.id} className={`d2-clip c${index + 1}`} onClick={() => showNotice(`“${clip.title}” · 다음 신호 준비 중 ▷`)}>
+              <button key={clip.id} className={`d2-clip c${index + 1}`} onClick={() => { window.location.href = "/clips"; }}>
                 <div style={{ "--clip": clip.gradient } as CSSProperties}><span>CLIP {String(index + 1).padStart(2, "0")}</span><b>▶</b><small>♥ {clip.stat}</small></div>
                 <strong>{clip.title}</strong><em>{clip.channel}</em>
               </button>
