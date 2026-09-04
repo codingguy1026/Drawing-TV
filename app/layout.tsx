@@ -4,6 +4,7 @@ import "./site-themes.css";
 import "./platform.css";
 import "./brand.css";
 import "./global-navbar.css";
+import "./settings-modal.css";
 import ThemeProvider from "./components/ThemeProvider";
 import PlatformLauncher from "./components/PlatformLauncher";
 import GlobalNavbar from "./components/GlobalNavbar";
