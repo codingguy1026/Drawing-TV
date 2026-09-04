@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./site-themes.css";
 import "./platform.css";
+import "./brand.css";
 import ThemeProvider from "./components/ThemeProvider";
 import PlatformLauncher from "./components/PlatformLauncher";
 
