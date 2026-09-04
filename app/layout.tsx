@@ -3,8 +3,10 @@ import "./globals.css";
 import "./site-themes.css";
 import "./platform.css";
 import "./brand.css";
+import "./global-navbar.css";
 import ThemeProvider from "./components/ThemeProvider";
 import PlatformLauncher from "./components/PlatformLauncher";
+import GlobalNavbar from "./components/GlobalNavbar";
 
 export const metadata: Metadata = {
   title: "DTV | Your channel. Your broadcast.",
@@ -29,7 +31,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="ko" data-dtv-theme="modern" suppressHydrationWarning>
       <head><script dangerouslySetInnerHTML={{ __html: themeBootScript }} /></head>
       <body>
-        <ThemeProvider>{children}<PlatformLauncher /></ThemeProvider>
+        <ThemeProvider>
+          <GlobalNavbar />
+          {children}
+          <PlatformLauncher />
+        </ThemeProvider>
       </body>
     </html>
   );
