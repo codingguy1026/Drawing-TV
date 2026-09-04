@@ -1,5 +1,10 @@
 "use client";
 
+<<<<<<< Updated upstream
+=======
+import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+>>>>>>> Stashed changes
 import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
 
@@ -8,6 +13,7 @@ const comments=[
  {user:"@pixel",text:"플레이어 UI 깔끔해졌네",time:"8분 전",pinned:false},
  {user:"@radio",text:"자막도 잘 보임",time:"14분 전",pinned:false},
 ];
+<<<<<<< Updated upstream
 export default function WatchPage(){
  const params=useParams<{id:string}>(); const id=Number(params?.id||1); const isLive=id>=101;
  const [liked,setLiked]=useState(false); const [disliked,setDisliked]=useState(false); const [subscribed,setSubscribed]=useState(false); const [saved,setSaved]=useState(false); const [captions,setCaptions]=useState(true); const [quality,setQuality]=useState("1080p"); const [speed,setSpeed]=useState("1x"); const [mini,setMini]=useState(false); const [share,setShare]=useState(false); const [report,setReport]=useState(false); const [toast,setToast]=useState<string|null>(null); const [chat,setChat]=useState(["@dguy: 시작한다 📡","@viewer12: 오늘 화질 좋다","@eagle26: 가자아아"]);
@@ -23,4 +29,229 @@ export default function WatchPage(){
  {report&&<div className="pf-card" style={{position:"fixed",zIndex:150,left:"50%",top:"50%",transform:"translate(-50%,-50%)",width:"min(440px,90vw)"}}><div className="pf-between"><h2>신고 · 차단</h2><button className="pf-btn" onClick={()=>setReport(false)}>×</button></div><div className="pf-stack" style={{marginTop:12}}>{["스팸 또는 오해의 소지가 있는 콘텐츠","괴롭힘 또는 혐오 표현","부적절한 연령 등급","저작권 문제"].map(x=><button className="pf-btn" key={x} onClick={()=>{setReport(false);show("신고가 접수되었습니다")}}>{x}</button>)}<button className="pf-btn danger" onClick={()=>{setReport(false);show("이 채널을 차단했습니다")}}>이 채널 차단</button></div></div>}
  {toast&&<div className="pf-badge" style={{position:"fixed",zIndex:180,left:"50%",bottom:28,transform:"translateX(-50%)",padding:"11px 15px",background:"#f4f4f6",color:"#111"}}>{toast}</div>}
  </div></main>
+=======
+
+const comments = [
+  { user: "야구보는사람", avatar: "야", time: "2시간 전", text: "03:42 여기서 표정 굳는 거 너무 현실적임 ㅋㅋㅋㅋ", stamp: 222, likes: 842 },
+  { user: "PixelFan", avatar: "P", time: "1시간 전", text: "07:18 설명 들어보니까 왜 흐름이 꼬였는지 바로 이해됨", stamp: 438, likes: 310 },
+  { user: "DTV시청자", avatar: "D", time: "48분 전", text: "다음 방송도 알림 켜놨습니다 📺", likes: 126 },
+];
+
+function formatTime(seconds: number) {
+  const safe = Math.max(0, Math.floor(seconds));
+  const min = Math.floor(safe / 60);
+  const sec = safe % 60;
+  return `${min}:${sec.toString().padStart(2, "0")}`;
+}
+
+export default function WatchPage() {
+  const params = useParams<{ id: string }>();
+  const { theme } = useDtvTheme();
+  const video = useMemo(() => catalog.find((item) => item.id === params?.id), [params?.id]);
+  const recommendations = useMemo(() => catalog.filter((item) => item.id !== video?.id).slice(0, 6), [video?.id]);
+  const playerFrameRef = useRef<HTMLDivElement>(null);
+
+  const [playing, setPlaying] = useState(false);
+  const [muted, setMuted] = useState(false);
+  const [position, setPosition] = useState(76);
+  const [liked, setLiked] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [subscribed, setSubscribed] = useState(false);
+  const [descriptionOpen, setDescriptionOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+  const toastTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const syncFullscreen = () => {
+      const fullscreenElement = document.fullscreenElement ?? (document as Document & { webkitFullscreenElement?: Element }).webkitFullscreenElement;
+      setIsFullscreen(fullscreenElement === playerFrameRef.current);
+    };
+
+    document.addEventListener("fullscreenchange", syncFullscreen);
+    document.addEventListener("webkitfullscreenchange", syncFullscreen);
+    return () => {
+      document.removeEventListener("fullscreenchange", syncFullscreen);
+      document.removeEventListener("webkitfullscreenchange", syncFullscreen);
+    };
+  }, []);
+
+  if (!video) {
+    return <main className={styles.page}><section className={styles.titleBlock}><h1>영상을 찾을 수 없습니다.</h1><p>주소를 확인하거나 홈에서 다른 방송을 선택해 주세요.</p><Link href="/">홈으로 돌아가기</Link></section></main>;
+  }
+
+  const notify = (message: string) => {
+    if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current);
+    setToast(message);
+    toastTimerRef.current = window.setTimeout(() => {
+      setToast(null);
+      toastTimerRef.current = null;
+    }, 1800);
+  };
+
+  const jumpTo = (seconds: number) => {
+    setPosition(Math.min(seconds, video.duration));
+    setPlaying(true);
+  };
+
+  const toggleFullscreen = async () => {
+    const frame = playerFrameRef.current;
+    if (!frame) return;
+
+    const fullscreenElement = document.fullscreenElement ?? (document as Document & { webkitFullscreenElement?: Element }).webkitFullscreenElement;
+
+    try {
+      if (fullscreenElement) {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else {
+          const legacyDocument = document as Document & { webkitExitFullscreen?: () => Promise<void> | void };
+          await legacyDocument.webkitExitFullscreen?.();
+        }
+        return;
+      }
+
+      if (frame.requestFullscreen) {
+        await frame.requestFullscreen();
+      } else {
+        const legacyFrame = frame as HTMLDivElement & { webkitRequestFullscreen?: () => Promise<void> | void };
+        if (legacyFrame.webkitRequestFullscreen) {
+          await legacyFrame.webkitRequestFullscreen();
+        } else {
+          notify("이 브라우저는 전체화면을 지원하지 않아요.");
+        }
+      }
+    } catch {
+      notify("전체화면 전환에 실패했어요. 브라우저 권한을 확인해 주세요.");
+    }
+  };
+
+  return (
+    <main className={styles.page}>
+      <header className={styles.topbar}>
+        <Link href="/" className={styles.brand} aria-label="DTV 홈"><strong>D</strong><span>▶</span><b>TV</b></Link>
+        <form className={styles.search} onSubmit={(event) => event.preventDefault()}>
+          <input aria-label="DTV 검색" placeholder="무엇을 보고 싶나요?" />
+          <button type="submit">검색</button>
+        </form>
+        <div className={styles.topActions}>
+          <SiteThemeMenu compact />
+          <button type="button" onClick={() => notify("알림 센터는 홈에서 확인할 수 있어요 🔔")}>◇</button>
+          <Link href="/channel/dguy" className={styles.profile}>D</Link>
+        </div>
+      </header>
+
+      {theme === "newsroom" && <div className={styles.newsTicker}><strong>DTV LIVE DESK</strong><span>현재 시청 중 · {video.title}</span><b>CH.1026</b></div>}
+
+      <div className={styles.shell}>
+        <section className={styles.mainColumn}>
+          <div
+            ref={playerFrameRef}
+            className={styles.playerFrame}
+            style={isFullscreen ? { width: "100vw", height: "100vh", display: "flex", flexDirection: "column", borderRadius: 0 } : undefined}
+          >
+            <div
+              className={styles.player}
+              style={{
+                background: video.gradient,
+                ...(isFullscreen ? { flex: "1 1 auto", minHeight: 0, aspectRatio: "auto" } : {}),
+              }}
+              onClick={() => setPlaying((value) => !value)}
+              role="button"
+              tabIndex={0}
+              aria-label={playing ? "일시정지" : "재생"}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setPlaying((value) => !value);
+                }
+              }}
+              onDoubleClick={(event) => {
+                event.stopPropagation();
+                void toggleFullscreen();
+              }}
+            >
+              <div className={styles.scanlines} aria-hidden="true" />
+              <div className={styles.playerOsd}>
+                <span>{theme === "vhs" ? "PLAY   SP" : theme === "analog" ? "CH 1026 · STEREO" : theme === "newsroom" ? "DTV NEWS FEED" : "DTV PLAYER"}</span>
+                <span>{theme === "vhs" ? "SEP.03 2026" : "HD"}</span>
+              </div>
+              <div className={styles.playerCenter}>
+                <span className={styles.playerAccent}>{video.accent}</span>
+                {!playing && <button type="button" className={styles.bigPlay} aria-label="재생" onClick={(event) => { event.stopPropagation(); setPlaying(true); }}>▶</button>}
+                {playing && <span className={styles.nowPlaying}>NOW PLAYING</span>}
+              </div>
+              {theme === "vhs" && <><div className={styles.vhsTrack} /><div className={styles.vhsTime}>00:{formatTime(position)}</div></>}
+              {theme === "analog" && <div className={styles.analogMark}>DTV UHF 26</div>}
+            </div>
+
+            <div className={styles.controls}>
+              <button type="button" onClick={() => setPlaying((value) => !value)}>{playing ? "Ⅱ" : "▶"}</button>
+              <button type="button" onClick={() => setMuted((value) => !value)}>{muted ? "🔇" : "🔊"}</button>
+              <span>{formatTime(position)} / {video.durationLabel}</span>
+              <input aria-label="재생 위치" type="range" min={0} max={video.duration} value={position} onChange={(event) => setPosition(Number(event.target.value))} />
+              <button type="button" aria-label={isFullscreen ? "전체화면 종료" : "전체화면"} title={isFullscreen ? "전체화면 종료" : "전체화면"} onClick={() => void toggleFullscreen()}>{isFullscreen ? "↙" : "⛶"}</button>
+              <button type="button" onClick={() => notify("화질: 1080p (프로토타입)")}>HD</button>
+            </div>
+          </div>
+
+          <div className={styles.titleBlock}>
+            <span className={styles.signalLabel}>{theme === "newsroom" ? "CURRENT REPORT" : theme === "vhs" ? "TAPE 01" : "NOW WATCHING"}</span>
+            <h1>{video.title}</h1>
+          </div>
+
+          <div className={styles.metaRow}>
+            <Link href={`/channel/${video.handle}`} className={styles.channelCard}>
+              <span className={styles.channelAvatar}>{video.channel.slice(0, 1)}</span>
+              <span><strong>{video.channel} ✓</strong><small>구독자 {video.subscribers}</small></span>
+            </Link>
+            <button type="button" className={`${styles.subscribe} ${subscribed ? styles.activeButton : ""}`} onClick={() => setSubscribed((value) => !value)}>{subscribed ? "구독 중" : "구독"}</button>
+            <div className={styles.actions}>
+              <button type="button" className={liked ? styles.activeButton : ""} onClick={() => setLiked((value) => !value)}>♥ {liked ? "1.3만" : "1.2만"}</button>
+              <button type="button" onClick={() => notify("공유 링크를 준비했어요 📡")}>↗ 공유</button>
+              <button type="button" className={saved ? styles.activeButton : ""} onClick={() => setSaved((value) => !value)}>{saved ? "✓ 저장됨" : "＋ 저장"}</button>
+              <button type="button" onClick={() => notify("더보기 메뉴 준비 중")}>•••</button>
+            </div>
+          </div>
+
+          <section className={styles.description}>
+            <strong>{video.views} · {video.age}</strong>
+            <p>{video.description}</p>
+            {descriptionOpen && <p>📡 DTV CH.1026 · 프로그램: 경기 같이 보기 / #야구 #스포츠 #DTV</p>}
+            <button type="button" onClick={() => setDescriptionOpen((value) => !value)}>{descriptionOpen ? "간략히" : "더보기"}</button>
+          </section>
+
+          <section className={styles.comments}>
+            <div className={styles.sectionHead}><h2>댓글 <span>1,842</span></h2><button type="button">정렬 ▾</button></div>
+            <div className={styles.commentComposer}><span>D</span><input placeholder="댓글 추가..." /><button type="button" onClick={() => notify("댓글 작성 기능은 계정 연결 후 활성화됩니다.")}>등록</button></div>
+            <div className={styles.commentList}>
+              {comments.map((comment) => (
+                <article key={`${comment.user}-${comment.time}`} className={styles.comment}>
+                  <span className={styles.commentAvatar}>{comment.avatar}</span>
+                  <div>
+                    <div className={styles.commentMeta}><strong>@{comment.user}</strong><span>{comment.time}</span></div>
+                    <p>{comment.text.split(/(\d{1,2}:\d{2})/).map((part, index) => /^\d{1,2}:\d{2}$/.test(part) && comment.stamp ? <button key={index} type="button" className={styles.timestamp} onClick={() => jumpTo(comment.stamp!)}>{part}</button> : <span key={index}>{part}</span>)}</p>
+                    <div className={styles.commentActions}><button type="button">♥ {comment.likes}</button><button type="button">답글</button></div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        </section>
+
+        <aside className={styles.recommendations}>
+          <div className={styles.upNext}><span>UP NEXT</span><strong>다음 방송 신호</strong></div>
+          {recommendations.map((item) => (
+            <Link href={`/watch/${item.id}`} className={styles.recommendation} key={item.id}>
+              <div className={styles.recThumb} style={{ background: item.gradient }}><span>{item.accent}</span><b>{item.durationLabel}</b></div>
+              <div><strong>{item.title}</strong><span>{item.channel}</span><small>{item.views} · {item.age}</small></div>
+            </Link>
+          ))}
+        </aside>
+      </div>
+
+      {toast && <div className={styles.toast}>{toast}</div>}
+    </main>
+  );
+>>>>>>> Stashed changes
 }

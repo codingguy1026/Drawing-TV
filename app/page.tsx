@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState, type CSSProperties } from "react";
+import { useMemo, useRef, useState, type CSSProperties } from "react";
+import Link from "next/link";
 import NotificationPanel from "./components/NotificationPanel";
 import SiteThemeMenu from "./components/SiteThemeMenu";
 
@@ -51,6 +52,7 @@ export default function Home() {
   const [notice, setNotice] = useState<string | null>(null);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(true);
+  const noticeTimerRef = useRef<number | null>(null);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -62,15 +64,19 @@ export default function Home() {
   }, [category, query]);
 
   const showNotice = (text: string) => {
+    if (noticeTimerRef.current !== null) window.clearTimeout(noticeTimerRef.current);
     setNotice(text);
-    window.setTimeout(() => setNotice(null), 2200);
+    noticeTimerRef.current = window.setTimeout(() => {
+      setNotice(null);
+      noticeTimerRef.current = null;
+    }, 2200);
   };
 
   const goDock = (label: string) => {
     setDock(label);
     if (label === "홈") window.scrollTo({ top: 0, behavior: "smooth" });
     else if (label === "LIVE") document.getElementById("on-air")?.scrollIntoView({ behavior: "smooth" });
-    else if (label === "클립") window.location.href = "/clips";
+    else if (label === "클립") window.location.assign("/clips");
     else if (label === "채널") document.getElementById("channels")?.scrollIntoView({ behavior: "smooth" });
     else showNotice("MY 페이지는 다음 단계에서 연결할게요 ◎");
   };
@@ -81,9 +87,9 @@ export default function Home() {
 
       <header className="d2-topbar">
         <div className="d2-brand-wrap">
-          <a href="#top" className="d2-brand" aria-label="DTV 홈">
+          <Link href="#top" className="d2-brand" aria-label="DTV 홈">
             <span className="d2-brand-mark">D</span><span className="d2-brand-tv">TV</span><i>● SIGNAL ON</i>
-          </a>
+          </Link>
         </div>
 
         <button className="d2-search-trigger" onClick={() => setSearchOpen(true)}>
@@ -126,25 +132,25 @@ export default function Home() {
             <h1>지금, 이 순간이<br /><strong>방송이 된다.</strong></h1>
             <p>영상 창고가 아니라 살아 움직이는 인터넷 방송국. 지금 켜진 신호부터 들어가 보세요.</p>
             <div className="d2-hero-buttons">
-              <a href="/watch/101">▶ 지금 방송 보기</a>
+              <Link href="/watch/1">▶ 지금 방송 보기</Link>
               <button onClick={() => document.getElementById("signal-feed")?.scrollIntoView({ behavior: "smooth" })}>내 신호 둘러보기 ↓</button>
             </div>
           </div>
 
-          <a href="/watch/101" className="d2-main-broadcast" style={{ "--broadcast": liveChannels[0].gradient } as CSSProperties}>
+          <Link href="/watch/1" className="d2-main-broadcast" style={{ "--broadcast": liveChannels[0].gradient } as CSSProperties}>
             <div className="d2-broadcast-top"><span>● LIVE</span><span>DTV SPORTS · CH 01</span></div>
             <div className="d2-broadcast-center"><b>⚾</b><span>오늘 경기<br />같이 봅시다</span></div>
             <div className="d2-broadcast-bottom"><span><b>드가이 스포츠</b><em>1.2K명 시청 중</em></span><i>▶</i></div>
-          </a>
+          </Link>
 
           <aside className="d2-live-rail">
             <div className="d2-rail-title"><span>지금 뜨는 채널</span><b>3 SIGNALS</b></div>
             {liveChannels.map((live, index) => (
-              <a href={`/watch/${live.id}`} key={live.id} className={index === 0 ? "active" : ""}>
+              <Link href={`/watch/${live.id === 101 ? 1 : live.id === 102 ? 3 : 4}`} key={live.id} className={index === 0 ? "active" : ""}>
                 <i style={{ background: live.gradient }}>{live.icon}</i>
                 <span><b>{live.channel}</b><em>{live.title}</em></span>
                 <small>{live.viewers}</small>
-              </a>
+              </Link>
             ))}
           </aside>
         </section>
@@ -166,11 +172,11 @@ export default function Home() {
         <section className="d2-section" id="clips">
           <div className="d2-section-head">
             <div><span className="d2-kicker purple">FLASH SIGNALS</span><h2>지금 이 장면이 뜬다</h2></div>
-            <button className="d2-link" onClick={() => { window.location.href = "/clips"; }}>클립 신호 열기 →</button>
+            <button className="d2-link" onClick={() => window.location.assign("/clips")}>클립 신호 열기 →</button>
           </div>
           <div className="d2-clips">
             {clips.map((clip, index) => (
-              <button key={clip.id} className={`d2-clip c${index + 1}`} onClick={() => { window.location.href = "/clips"; }}>
+              <button key={clip.id} className={`d2-clip c${index + 1}`} onClick={() => window.location.assign("/clips")}>
                 <div style={{ "--clip": clip.gradient } as CSSProperties}><span>CLIP {String(index + 1).padStart(2, "0")}</span><b>▶</b><small>♥ {clip.stat}</small></div>
                 <strong>{clip.title}</strong><em>{clip.channel}</em>
               </button>
@@ -187,7 +193,7 @@ export default function Home() {
           {filtered.length ? (
             <div className="d2-signal-grid">
               {filtered.map((video, index) => (
-                <a href={`/watch/${video.id}`} className={`d2-signal-card s${(index % 6) + 1}`} key={video.id}>
+                <Link href={`/watch/${video.id}`} className={`d2-signal-card s${(index % 6) + 1}`} key={video.id}>
                   <div className="d2-signal-art" style={{ "--signal": video.gradient } as CSSProperties}>
                     <span>{video.category.toUpperCase()} · CH {String(video.id).padStart(2, "0")}</span>
                     <b>{video.icon}</b>
@@ -195,7 +201,7 @@ export default function Home() {
                     <i>▶</i>
                   </div>
                   <div className="d2-signal-info"><strong>{video.title}</strong><span>{video.channel}</span><em>{video.meta}</em></div>
-                </a>
+                </Link>
               ))}
             </div>
           ) : (

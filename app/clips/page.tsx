@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import Link from "next/link";
 
 const clips = [
   { id: 1, code: "S-017", title: "이게 왜 홈런이 아니냐고", channel: "드가이 스포츠", handle: "@dguy", likes: "82K", comments: "1.4K", icon: "⚾", tag: "SPORTS", gradient: "linear-gradient(165deg,#ff765f 0%,#6f1936 48%,#110d14 100%)", ratio: [9, 16], ratioLabel: "9:16", frameMax: "420px" },
@@ -15,7 +16,9 @@ export default function ClipsPage() {
   const [liked, setLiked] = useState<number[]>([]);
   const [muted, setMuted] = useState(false);
   const [commentsOpen, setCommentsOpen] = useState(false);
+  const [playing, setPlaying] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const toastTimerRef = useRef<number | null>(null);
   const current = clips[index];
 
   const tune = useCallback((direction: 1 | -1) => {
@@ -49,8 +52,12 @@ export default function ClipsPage() {
   const progress = useMemo(() => ((index + 1) / clips.length) * 100, [index]);
 
   const showToast = (text: string) => {
+    if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current);
     setToast(text);
-    window.setTimeout(() => setToast(null), 1800);
+    toastTimerRef.current = window.setTimeout(() => {
+      setToast(null);
+      toastTimerRef.current = null;
+    }, 1800);
   };
 
   const frameVars = {
@@ -64,11 +71,11 @@ export default function ClipsPage() {
       <style>{styles}</style>
 
       <header className="clip-topbar">
-        <a href="/" className="clip-brand"><span>D</span><b>TV</b><i>CLIP SIGNAL</i></a>
+        <Link href="/" className="clip-brand"><span>D</span><b>TV</b><i>CLIP SIGNAL</i></Link>
         <div className="clip-mode"><span className="pulse" /> <b>LIVE FEED</b><em>{current.code}</em></div>
         <div className="clip-top-actions">
           <button onClick={() => setMuted((value) => !value)}>{muted ? "MUTED" : "SOUND ON"}</button>
-          <a href="/">홈으로</a>
+          <Link href="/">홈으로</Link>
         </div>
       </header>
 
@@ -95,9 +102,9 @@ export default function ClipsPage() {
               <b>{current.tag} · {current.code}</b>
             </div>
 
-            <button className="viewer-surface" aria-label="재생 또는 일시정지" onClick={() => showToast("재생 / 일시정지")}> 
+            <button className="viewer-surface" aria-label={playing ? "일시정지" : "재생"} aria-pressed={playing} onClick={() => setPlaying((value) => !value)}> 
               <span className="hero-icon">{current.icon}</span>
-              <span className="fake-play">▶</span>
+              {!playing && <span className="fake-play">▶</span>}
             </button>
 
             <div className="viewer-copy">

@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, startTransition, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
 export type DtvTheme = "modern" | "analog" | "vhs" | "newsroom";
 
@@ -22,13 +22,29 @@ function isTheme(value: string | null): value is DtvTheme {
   return dtvThemes.some((theme) => theme.id === value);
 }
 
+function readStoredTheme(key: string) {
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function storeTheme(theme: DtvTheme) {
+  try {
+    window.localStorage.setItem("dtv-site-theme", theme);
+  } catch {
+    // The in-memory theme and document attribute still work when storage is blocked.
+  }
+}
+
 export default function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<DtvTheme>("modern");
 
   useEffect(() => {
     const current = document.documentElement.dataset.dtvTheme;
-    const saved = window.localStorage.getItem("dtv-site-theme");
-    const legacy = window.localStorage.getItem("dtv-channel-theme");
+    const saved = readStoredTheme("dtv-site-theme");
+    const legacy = readStoredTheme("dtv-channel-theme");
     const initial = isTheme(current ?? null)
       ? current as DtvTheme
       : isTheme(saved)
@@ -37,15 +53,15 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
           ? legacy
           : "modern";
 
-    setThemeState(initial);
+    startTransition(() => setThemeState(initial));
     document.documentElement.dataset.dtvTheme = initial;
-    window.localStorage.setItem("dtv-site-theme", initial);
+    storeTheme(initial);
   }, []);
 
   const setTheme = (nextTheme: DtvTheme) => {
     setThemeState(nextTheme);
     document.documentElement.dataset.dtvTheme = nextTheme;
-    window.localStorage.setItem("dtv-site-theme", nextTheme);
+    storeTheme(nextTheme);
   };
 
   const value = useMemo(() => ({ theme, setTheme }), [theme]);
