@@ -38,6 +38,7 @@ const PlaybackContext = createContext<PlaybackContextValue | null>(null);
 export default function PlaybackProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const previousPath = useRef(pathname);
+  const currentVideoId = useRef<string | null>(null);
   const lastTick = useRef(Date.now());
   const [currentVideo, setCurrentVideo] = useState<PlaybackVideo | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
@@ -50,16 +51,17 @@ export default function PlaybackProvider({ children }: { children: React.ReactNo
   const [miniPlayerDismissed, setMiniPlayerDismissed] = useState(false);
 
   const loadVideo = useCallback((video: PlaybackVideo, startAt?: number) => {
-    setCurrentVideo((previous) => {
-      const isSameVideo = previous?.id === video.id;
-      if (!isSameVideo) {
-        setCurrentTime(clamp(startAt ?? 0, 0, video.duration));
-        setIsPlaying(false);
-      } else if (startAt !== undefined) {
-        setCurrentTime(clamp(startAt, 0, video.duration));
-      }
-      return video;
-    });
+    const isSameVideo = currentVideoId.current === video.id;
+    currentVideoId.current = video.id;
+    setCurrentVideo(video);
+
+    if (!isSameVideo) {
+      setCurrentTime(clamp(startAt ?? 0, 0, video.duration));
+      setIsPlaying(false);
+    } else if (startAt !== undefined) {
+      setCurrentTime(clamp(startAt, 0, video.duration));
+    }
+
     setDuration(video.duration);
     setMiniPlayerVisible(false);
     setMiniPlayerDismissed(false);
@@ -74,11 +76,12 @@ export default function PlaybackProvider({ children }: { children: React.ReactNo
 
   const pause = useCallback(() => setIsPlaying(false), []);
   const togglePlay = useCallback(() => {
+    if (!currentVideo || duration <= 0) return;
     setIsPlaying((playing) => {
       if (!playing) lastTick.current = Date.now();
       return !playing;
     });
-  }, []);
+  }, [currentVideo, duration]);
 
   const seek = useCallback((seconds: number) => {
     setCurrentTime(clamp(seconds, 0, duration));
