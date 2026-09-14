@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import PlaybackProvider from "@/components/playback-provider";
+import MiniPlayer from "@/components/mini-player";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,7 +29,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-[var(--background)] text-[var(--foreground)] antialiased`}
       >
-        {children}
+        <PlaybackProvider>
+          {children}
+          <MiniPlayer />
+        </PlaybackProvider>
       </body>
     </html>
   );
