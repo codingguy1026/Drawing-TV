@@ -2,7 +2,6 @@
 
 import { Captions, Fullscreen, Gauge, Pause, Play, Settings2, Volume2, VolumeX } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
-import { useSearchParams } from "next/navigation";
 import { usePlayback } from "@/components/playback-provider";
 import { formatTimestamp, timestampToSeconds } from "@/lib/time";
 
@@ -16,7 +15,6 @@ type VideoPlayerProps = {
 
 export default function VideoPlayer({ id, title, accent, creator, durationLabel = "12:48" }: VideoPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const searchParams = useSearchParams();
   const {
     currentVideo,
     currentTime,
@@ -34,17 +32,13 @@ export default function VideoPlayer({ id, title, accent, creator, durationLabel 
   } = usePlayback();
 
   const durationSeconds = useMemo(() => timestampToSeconds(durationLabel) ?? 0, [durationLabel]);
-  const startParam = searchParams.get("t");
-  const startAt = useMemo(() => {
-    if (!startParam) return undefined;
-    const parsed = timestampToSeconds(startParam);
-    if (parsed === null) return undefined;
-    return Math.min(parsed, durationSeconds);
-  }, [durationSeconds, startParam]);
 
   useEffect(() => {
+    const startParam = new URLSearchParams(window.location.search).get("t");
+    const parsed = startParam ? timestampToSeconds(startParam) : null;
+    const startAt = parsed === null ? undefined : Math.min(parsed, durationSeconds);
     loadVideo({ id, title, creator, accent, duration: durationSeconds }, startAt);
-  }, [accent, creator, durationSeconds, id, loadVideo, startAt, title]);
+  }, [accent, creator, durationSeconds, id, loadVideo, title]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
