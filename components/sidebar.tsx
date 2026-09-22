@@ -34,7 +34,7 @@ function NavLink({ href, label, icon: Icon, active }: { href: string; label: str
       }`}
     >
       <span className={`flex h-8 w-8 items-center justify-center rounded-xl transition ${
-        active ? "bg-[var(--background)]/10" : "bg-transparent group-hover:bg-[var(--panel)]"
+        active ? "bg-white/10 dark:bg-black/10" : "bg-transparent group-hover:bg-[var(--panel)]"
       }`}>
         <Icon className="h-4 w-4" />
       </span>
