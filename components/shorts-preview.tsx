@@ -1,39 +1,43 @@
-import { Play, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { ArrowUpRight, Play, Sparkles } from "lucide-react";
 import { shorts } from "@/lib/mock-data";
 
 export default function ShortsPreview() {
   return (
-    <section className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[var(--accent)]">
-            <Sparkles className="h-4 w-4" />
+    <section className="overflow-hidden rounded-[30px] border border-[var(--border)] bg-[var(--foreground)] p-4 text-[var(--background)] shadow-[var(--shadow)] sm:p-5">
+      <div className="mb-4 flex items-end justify-between gap-4">
+        <div>
+          <div className="mb-1 flex items-center gap-2 text-[var(--accent)]">
+            <Sparkles className="h-3.5 w-3.5" />
+            <span className="tv-kicker">Fast lane</span>
           </div>
-          <h2 className="text-lg font-bold text-[var(--foreground)]">Shorts</h2>
+          <h2 className="text-xl font-black tracking-[-0.035em]">Shorts, 한 번에 훑기</h2>
         </div>
-        <button className="text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)]">더보기</button>
+        <Link href="/shorts" className="flex items-center gap-1 text-xs font-bold opacity-65 transition hover:opacity-100">
+          모두 보기 <ArrowUpRight className="h-3.5 w-3.5" />
+        </Link>
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        {shorts.map((short) => (
-          <article key={short.id} className="group">
-            <div
-              className="relative aspect-[9/16] overflow-hidden rounded-[1.5rem] border border-[var(--border)] shadow-sm transition duration-200 group-hover:translate-y-[-2px] group-hover:shadow-md"
+        {shorts.map((short, index) => (
+          <Link href="/shorts" key={short.id} className="group block">
+            <article
+              className={`relative aspect-[9/14] overflow-hidden rounded-[22px] transition duration-300 group-hover:-translate-y-1 md:${index % 2 ? "translate-y-4" : ""}`}
               style={{ backgroundImage: short.accent }}
             >
-              <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(15,23,42,0.7),transparent_38%)]" />
-              <div className="absolute bottom-3 left-3 right-3">
-                <div className="mb-2 flex items-center justify-between text-[10px] text-white/80">
+              <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(4,5,8,0.82),rgba(4,5,8,0.02)_64%)]" />
+              <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-md transition group-hover:bg-white group-hover:text-black">
+                <Play className="h-3.5 w-3.5 fill-current" />
+              </div>
+              <div className="absolute inset-x-3 bottom-3">
+                <div className="mb-2 flex items-center justify-between text-[10px] font-bold text-white/65">
                   <span>{short.creator}</span>
                   <span>{short.views}</span>
                 </div>
-                <h3 className="line-clamp-3 text-sm font-semibold text-white">{short.title}</h3>
+                <h3 className="line-clamp-3 text-sm font-extrabold leading-5 text-white">{short.title}</h3>
               </div>
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/25 p-2 text-white backdrop-blur-sm">
-                <Play className="h-4 w-4 fill-current" />
-              </div>
-            </div>
-          </article>
+            </article>
+          </Link>
         ))}
       </div>
     </section>
