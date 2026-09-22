@@ -17,15 +17,15 @@ export default function MobileNavigation() {
   const isActive = (href: string) => href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <nav className="fixed inset-x-3 bottom-3 z-50 rounded-[24px] border border-[var(--border)] bg-[var(--header)] p-1.5 shadow-[var(--shadow)] backdrop-blur-2xl lg:hidden">
+    <nav className="fixed inset-x-3 bottom-3 z-50 rounded-[22px] border border-[var(--border)] bg-[var(--header)] p-1.5 shadow-[var(--shadow)] backdrop-blur-xl lg:hidden">
       <div className="grid grid-cols-5 items-center gap-1">
         {items.map(({ label, icon: Icon, href, create }) => {
           const active = isActive(href);
 
           if (create) {
             return (
-              <Link key={label} href={href} className="flex -translate-y-3 flex-col items-center gap-1 text-[10px] font-bold text-[var(--foreground)]">
-                <span className="flex h-12 w-12 items-center justify-center rounded-[18px] bg-[linear-gradient(145deg,var(--accent),var(--accent-2))] text-white shadow-lg">
+              <Link key={label} href={href} className="flex -translate-y-2 flex-col items-center gap-1 text-[10px] font-bold text-[var(--foreground)]">
+                <span className="flex h-11 w-11 items-center justify-center rounded-[16px] bg-[linear-gradient(145deg,var(--accent),var(--accent-2))] text-white shadow-md">
                   <Icon className="h-5 w-5" />
                 </span>
                 {label}
@@ -37,11 +37,11 @@ export default function MobileNavigation() {
             <Link
               key={label}
               href={href}
-              className={`flex min-h-12 flex-col items-center justify-center gap-1 rounded-[18px] px-1 text-[10px] font-bold transition ${
-                active ? "bg-[var(--foreground)] text-[var(--background)]" : "text-[var(--muted)]"
+              className={`flex min-h-12 flex-col items-center justify-center gap-1 rounded-[16px] px-1 text-[10px] font-bold transition ${
+                active ? "bg-[var(--accent-soft)] text-[var(--foreground)]" : "text-[var(--muted)]"
               }`}
             >
-              <Icon className="h-[18px] w-[18px]" />
+              <Icon className={`h-[18px] w-[18px] ${active ? "text-[var(--accent)]" : ""}`} />
               {label}
             </Link>
           );
