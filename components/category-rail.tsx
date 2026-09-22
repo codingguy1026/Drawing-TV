@@ -7,10 +7,10 @@ export default function CategoryRail() {
         {categories.map((category, index) => (
           <button
             key={category.id}
-            className={`rounded-2xl px-3.5 py-2 text-sm font-bold transition ${
+            className={`rounded-full border px-3.5 py-2 text-sm font-semibold transition ${
               index === 0
-                ? "bg-[var(--foreground)] text-[var(--background)] shadow-sm"
-                : "border border-[var(--border)] bg-[var(--panel-soft)] text-[var(--muted)] backdrop-blur-xl hover:-translate-y-0.5 hover:bg-[var(--panel)] hover:text-[var(--foreground)]"
+                ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--foreground)]"
+                : "border-[var(--border)] bg-[var(--panel-strong)] text-[var(--muted)] hover:bg-[var(--hover)] hover:text-[var(--foreground)]"
             }`}
           >
             {category.label}
