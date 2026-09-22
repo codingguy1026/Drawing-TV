@@ -22,7 +22,7 @@ export default function ShortsPreview() {
         {shorts.map((short, index) => (
           <Link href="/shorts" key={short.id} className="group block">
             <article
-              className={`relative aspect-[9/14] overflow-hidden rounded-[22px] transition duration-300 group-hover:-translate-y-1 md:${index % 2 ? "translate-y-4" : ""}`}
+              className={`relative aspect-[9/14] overflow-hidden rounded-[22px] transition duration-300 group-hover:-translate-y-1 ${index % 2 ? "md:translate-y-4" : ""}`}
               style={{ backgroundImage: short.accent }}
             >
               <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(4,5,8,0.82),rgba(4,5,8,0.02)_64%)]" />
