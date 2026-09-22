@@ -1,27 +1,35 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f5f7fb;
-  --foreground: #0d1117;
-  --muted: #586579;
-  --border: rgba(15, 23, 42, 0.12);
-  --panel: rgba(255, 255, 255, 0.8);
-  --panel-strong: #ffffff;
-  --accent: #ff5a3c;
-  --accent-soft: rgba(255, 90, 60, 0.12);
-  --hover: rgba(15, 23, 42, 0.04);
+  --background: #f3f2ee;
+  --foreground: #151517;
+  --muted: #737177;
+  --border: rgba(24, 24, 27, 0.1);
+  --panel: rgba(255, 255, 255, 0.68);
+  --panel-strong: #fffdfa;
+  --panel-soft: rgba(255, 255, 255, 0.45);
+  --accent: #ff4d2e;
+  --accent-2: #7c5cff;
+  --accent-soft: rgba(255, 77, 46, 0.1);
+  --hover: rgba(24, 24, 27, 0.055);
+  --shadow: 0 18px 60px rgba(39, 34, 28, 0.1);
+  --header: rgba(243, 242, 238, 0.78);
 }
 
 html.dark {
-  --background: #090d13;
-  --foreground: #edf3ff;
-  --muted: #9aa8bd;
-  --border: rgba(148, 163, 184, 0.16);
-  --panel: rgba(17, 24, 39, 0.82);
-  --panel-strong: #111827;
-  --accent: #ff6b4d;
-  --accent-soft: rgba(255, 107, 77, 0.12);
-  --hover: rgba(148, 163, 184, 0.08);
+  --background: #08090c;
+  --foreground: #f5f4f2;
+  --muted: #9c9ba3;
+  --border: rgba(255, 255, 255, 0.09);
+  --panel: rgba(19, 20, 26, 0.72);
+  --panel-strong: #121318;
+  --panel-soft: rgba(255, 255, 255, 0.035);
+  --accent: #ff654a;
+  --accent-2: #9075ff;
+  --accent-soft: rgba(255, 101, 74, 0.12);
+  --hover: rgba(255, 255, 255, 0.06);
+  --shadow: 0 22px 70px rgba(0, 0, 0, 0.34);
+  --header: rgba(8, 9, 12, 0.76);
 }
 
 @theme inline {
@@ -38,7 +46,11 @@ html {
 }
 
 body {
-  background: var(--background);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 80% -10%, color-mix(in srgb, var(--accent-2) 12%, transparent), transparent 34rem),
+    radial-gradient(circle at -10% 20%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 28rem),
+    var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, sans-serif;
 }
@@ -47,9 +59,13 @@ body {
   box-sizing: border-box;
 }
 
+::selection {
+  background: color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
 }
 
 ::-webkit-scrollbar-track {
@@ -57,8 +73,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.4);
-  border-radius: 9999px;
+  background: color-mix(in srgb, var(--muted) 34%, transparent);
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
 }
 
 button,
@@ -68,13 +86,41 @@ textarea {
   font: inherit;
 }
 
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
 img {
   max-width: 100%;
   display: block;
 }
 
+.tv-panel {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(24px);
+}
+
+.tv-kicker {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.tv-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--foreground) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--foreground) 4%, transparent) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
