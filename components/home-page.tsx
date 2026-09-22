@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Clock3, Flame, Play, Radio, Sparkles, TrendingUp, Users } from "lucide-react";
+import { ArrowRight, Clock3, Flame, Play, Radio, TrendingUp, Users } from "lucide-react";
 import { continueWatching, creators, featuredVideos, trendingList } from "@/lib/mock-data";
 import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
