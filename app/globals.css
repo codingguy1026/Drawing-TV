@@ -119,3 +119,42 @@ img {
     scroll-behavior: auto !important;
   }
 }
+
+
+/* Liquid Glass v1: video surfaces keep their editorial contrast. */
+:root {
+  --liquid-edge: rgba(255, 255, 255, .77);
+  --liquid-gleam: rgba(255, 255, 255, .95);
+  --liquid-depth: rgba(27, 35, 57, .095);
+}
+html.dark {
+  --liquid-edge: rgba(255, 255, 255, .15);
+  --liquid-gleam: rgba(255, 255, 255, .12);
+  --liquid-depth: rgba(0, 0, 0, .3);
+}
+:is(.tv-panel, header[class*="backdrop-blur"], nav[class*="backdrop-blur"], aside [class*="bg-[var(--panel)]"]) {
+  border-color: var(--liquid-edge);
+  box-shadow: inset 0 1px 0 var(--liquid-gleam), 0 14px 38px var(--liquid-depth);
+  -webkit-backdrop-filter: saturate(150%) blur(18px);
+  backdrop-filter: saturate(150%) blur(18px);
+}
+.tv-panel {
+  background-color: color-mix(in srgb, var(--panel) 76%, transparent);
+}
+:is(header[class*="backdrop-blur"], nav[class*="backdrop-blur"]) {
+  background-color: color-mix(in srgb, var(--header) 78%, transparent);
+}
+@media (max-width: 640px) {
+  :is(.tv-panel, header[class*="backdrop-blur"], nav[class*="backdrop-blur"], aside [class*="bg-[var(--panel)]"]) {
+    -webkit-backdrop-filter: saturate(120%) blur(10px);
+    backdrop-filter: saturate(120%) blur(10px);
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  :is(.tv-panel, header[class*="backdrop-blur"], nav[class*="backdrop-blur"], aside [class*="bg-[var(--panel)]"]) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .tv-panel { background-color: var(--panel-strong); }
+  :is(header[class*="backdrop-blur"], nav[class*="backdrop-blur"]) { background-color: var(--background); }
+}
