@@ -1,5 +1,5 @@
-import HomePage from "@/components/home-page";
+import SocialFeed from "@/components/social-feed";
 
 export default function Page() {
-  return <HomePage />;
+  return <SocialFeed />;
 }
