@@ -5,7 +5,8 @@ import { Bookmark, Clapperboard, Clock3, Compass, Flame, History, House, PlaySqu
 import { usePathname } from "next/navigation";
 
 const primary = [
-  { label: "홈", icon: House, href: "/" },
+  { label: "피드", icon: House, href: "/" },
+  { label: "영상", icon: Video, href: "/videos" },
   { label: "Shorts", icon: Clapperboard, href: "/shorts" },
   { label: "구독", icon: PlaySquare, href: "/subscriptions" },
   { label: "탐색", icon: Compass, href: "/explore" },
