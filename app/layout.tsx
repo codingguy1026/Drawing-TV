@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Drawing TV",
-  description: "A standalone youth-focused video platform for discovery, creators, and community.",
+  description: "영상·클립·커뮤니티 신호가 연결되는 창작 소셜 플랫폼. 피드는 2026년, 채널은 1996년.",
 };
 
 export default function RootLayout({
