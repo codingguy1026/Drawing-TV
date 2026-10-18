@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Clapperboard, Home, Plus, UserRound, PlaySquare } from "lucide-react";
+import { Clapperboard, Home, Plus, UserRound, Video } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 const items = [
   { label: "홈", icon: Home, href: "/" },
-  { label: "Shorts", icon: Clapperboard, href: "/shorts" },
+  { label: "영상", icon: Video, href: "/videos" },
   { label: "만들기", icon: Plus, href: "/upload", create: true },
-  { label: "구독", icon: PlaySquare, href: "/subscriptions" },
+  { label: "Shorts", icon: Clapperboard, href: "/shorts" },
   { label: "내 페이지", icon: UserRound, href: "/library" },
 ];
 
