@@ -4,7 +4,7 @@ import Link from "next/link";
 import { type FormEvent, useEffect, useState } from "react";
 import {
   ArrowUpRight, Bookmark, Clapperboard, Heart, MessageCircle, PenLine,
-  Play, Radio, Send, Share2, Sparkles, UserPlus, Users, Video
+  Pencil, Play, Radio, Send, Share2, Sparkles, Trash2, UserPlus, Users, Video
 } from "lucide-react";
 import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
@@ -120,6 +120,8 @@ export default function SocialFeed() {
   const [ready, setReady] = useState(false);
   const [tab, setTab] = useState<"discover" | "following" | "saved">("discover");
   const [draft, setDraft] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingDraft, setEditingDraft] = useState("");
   const [openComments, setOpenComments] = useState<string | null>(null);
   const [commentDraft, setCommentDraft] = useState("");
   const [notice, setNotice] = useState("");
@@ -181,6 +183,47 @@ export default function SocialFeed() {
     setTab("discover");
     setDraft("");
     setNotice("이 브라우저에 게시글을 저장했어요. 다른 사용자에게는 아직 공개되지 않아요.");
+  }
+
+  function startEditing(post: SocialPost) {
+    setEditingId(post.id);
+    setEditingDraft(post.body);
+  }
+
+  function saveEditing(event: FormEvent<HTMLFormElement>, postId: string) {
+    event.preventDefault();
+    const body = editingDraft.trim();
+    if (!body || body.length > 500) return;
+    setData((prev) => ({
+      ...prev,
+      ownPosts: prev.ownPosts.map((post) => post.id === postId
+        ? { ...post, body, tags: Array.from(new Set(body.match(/#[^\\s#]+/g) || [])).slice(0, 5) }
+        : post),
+    }));
+    setEditingId(null);
+    setEditingDraft("");
+    setNotice("이 브라우저에 게시글 수정을 저장했어요.");
+  }
+
+  function deleteOwnPost(postId: string) {
+    if (!window.confirm("이 게시글을 삭제할까요? 이 브라우저에서 삭제되며 되돌릴 수 없어요.")) return;
+    setData((prev) => {
+      const comments = { ...prev.comments };
+      delete comments[postId];
+      return {
+        ...prev,
+        ownPosts: prev.ownPosts.filter((post) => post.id !== postId),
+        liked: prev.liked.filter((id) => id !== postId),
+        saved: prev.saved.filter((id) => id !== postId),
+        comments,
+      };
+    });
+    if (editingId === postId) {
+      setEditingId(null);
+      setEditingDraft("");
+    }
+    if (openComments === postId) setOpenComments(null);
+    setNotice("이 브라우저에서 게시글을 삭제했어요.");
   }
 
   function addComment(event: FormEvent<HTMLFormElement>, postId: string) {
@@ -327,7 +370,26 @@ export default function SocialFeed() {
                               </div>
                               <p className="mt-1 text-[11px] font-bold uppercase tracking-[0.13em] text-[var(--accent)]">{post.kind === "video" ? "VIDEO SIGNAL" : post.kind === "short" ? "SHORT SIGNAL" : "COMMUNITY SIGNAL"}</p>
                             </div>
-                            {post.handle !== "@me" && (
+                            {post.handle === "@me" ? (
+                              <div className="flex shrink-0 gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() => editingId === post.id ? setEditingId(null) : startEditing(post)}
+                                  aria-label="내 게시글 수정"
+                                  className="rounded-full p-2 text-[var(--muted)] hover:bg-[var(--hover)] hover:text-[var(--accent)]"
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => deleteOwnPost(post.id)}
+                                  aria-label="내 게시글 삭제"
+                                  className="rounded-full p-2 text-[var(--muted)] hover:bg-[var(--hover)] hover:text-red-500"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              </div>
+                            ) : (
                               <button
                                 type="button"
                                 aria-pressed={followed}
@@ -338,8 +400,31 @@ export default function SocialFeed() {
                               </button>
                             )}
                           </div>
-                          <p className="mt-4 whitespace-pre-wrap break-words text-sm leading-7">{post.body}</p>
-                          {post.tags.length > 0 && <p className="mt-2 break-words text-xs font-semibold text-[var(--accent)]">{post.tags.join("  ")}</p>}
+                          {editingId === post.id ? (
+                            <form onSubmit={(event) => saveEditing(event, post.id)} className="mt-4 space-y-3">
+                              <label htmlFor={"edit-post-" + post.id} className="block text-xs font-bold text-[var(--muted)]">게시글 수정</label>
+                              <textarea
+                                id={"edit-post-" + post.id}
+                                value={editingDraft}
+                                maxLength={500}
+                                rows={4}
+                                onChange={(event) => setEditingDraft(event.target.value)}
+                                className="w-full resize-y rounded-2xl border border-[var(--border)] bg-[var(--panel-strong)] p-3 text-sm outline-none focus:border-[var(--accent)]"
+                              />
+                              <div className="flex items-center justify-between gap-3">
+                                <span className="text-xs text-[var(--muted)]">{editingDraft.length}/500자</span>
+                                <div className="flex gap-2">
+                                  <button type="button" onClick={() => setEditingId(null)} className="rounded-full border border-[var(--border)] px-4 py-2 text-xs font-bold">취소</button>
+                                  <button type="submit" disabled={!editingDraft.trim()} className="rounded-full bg-[var(--accent)] px-4 py-2 text-xs font-black text-white disabled:opacity-40">수정 저장</button>
+                                </div>
+                              </div>
+                            </form>
+                          ) : (
+                            <>
+                              <p className="mt-4 whitespace-pre-wrap break-words text-sm leading-7">{post.body}</p>
+                              {post.tags.length > 0 && <p className="mt-2 break-words text-xs font-semibold text-[var(--accent)]">{post.tags.join("  ")}</p>}
+                            </>
+                          )}
 
                           {post.mediaHref && (
                             <Link
