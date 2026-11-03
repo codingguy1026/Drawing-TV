@@ -28,6 +28,7 @@ type SocialPost = {
   likes: number;
 };
 
+type InterestKey = "all" | "gaming" | "music" | "development" | "sports";
 type CommentItem = { id: string; body: string };
 type SocialState = {
   ownPosts: SocialPost[];
@@ -35,9 +36,32 @@ type SocialState = {
   saved: string[];
   following: string[];
   comments: Record<string, CommentItem[]>;
+  interest: InterestKey;
 };
 
 const STORAGE_KEY = "drawing-tv-social-v1";
+
+// Keep the prototype explainable: filter existing creator posts by their
+// own text, hashtags and video titles instead of pretending to rank users.
+const INTEREST_FILTERS: {
+  key: InterestKey;
+  label: string;
+  emoji: string;
+  keywords: string[];
+}[] = [
+  { key: "all", label: "전체", emoji: "✨", keywords: [] },
+  { key: "gaming", label: "게임", emoji: "🎮", keywords: ["게임", "gaming", "game", "e스포츠", "이스포츠"] },
+  { key: "music", label: "음악", emoji: "🎵", keywords: ["음악", "플레이리스트", "노래", "작곡", "music", "beat", "비트"] },
+  { key: "development", label: "개발", emoji: "💻", keywords: ["개발", "코딩", "프로그래밍", "코드", "프로젝트", "development", "coding"] },
+  { key: "sports", label: "스포츠", emoji: "⚾", keywords: ["야구", "축구", "농구", "스포츠", "경기", "baseball", "sports"] },
+];
+
+function matchesInterest(post: SocialPost, interest: InterestKey) {
+  if (interest === "all") return true;
+  const keywords = INTEREST_FILTERS.find((item) => item.key === interest)?.keywords ?? [];
+  const searchable = [post.body, post.mediaTitle ?? "", ...post.tags].join(" ").toLocaleLowerCase();
+  return keywords.some((keyword) => searchable.includes(keyword.toLocaleLowerCase()));
+}
 
 const demoPosts: SocialPost[] = [
   {
@@ -105,6 +129,7 @@ const startState: SocialState = {
   saved: [],
   following: [],
   comments: {},
+  interest: "all",
 };
 
 const suggestions = [
@@ -135,6 +160,8 @@ export default function SocialFeed() {
           saved: Array.isArray(stored.saved) ? stored.saved : [],
           following: Array.isArray(stored.following) ? stored.following : [],
           comments: stored.comments && typeof stored.comments === "object" && !Array.isArray(stored.comments) ? stored.comments : {},
+          interest: stored.interest && INTEREST_FILTERS.some((item) => item.key === stored.interest)
+            ? stored.interest : "all",
         });
       }
     } catch {
@@ -208,11 +235,13 @@ export default function SocialFeed() {
   }
 
   const allPosts = [...data.ownPosts, ...demoPosts];
-  const visible = allPosts.filter((post) =>
-    tab === "discover" ? true :
-    tab === "following" ? post.handle === "@me" || data.following.includes(post.handle) :
-    data.saved.includes(post.id)
-  );
+  const visible = allPosts.filter((post) => {
+    const inTab = tab === "discover"
+      || (tab === "following" && (post.handle === "@me" || data.following.includes(post.handle)))
+      || (tab === "saved" && data.saved.includes(post.id));
+    // Interest filters only apply to Discover, so saved/followed posts stay accessible.
+    return inTab && (tab !== "discover" || matchesInterest(post, data.interest));
+  });
 
   return (
     <div className="min-h-screen text-[var(--foreground)]">
@@ -229,7 +258,7 @@ export default function SocialFeed() {
                     <Radio className="h-4 w-4" /> Drawing TV · Signal
                   </span>
                   <h1 className="mt-2 text-2xl font-black tracking-[-0.05em] sm:text-[32px]">모든 이야기가 하나의 신호가 되는 곳.</h1>
-                  <p className="mt-2 text-sm leading-6 text-[var(--muted)]">영상도, 짧은 클립도, 소소한 생각도. 피드는 2026년, 채널은 1996년.</p>
+                  <p className="mt-2 text-sm leading-6 text-[var(--muted)]">좋아하는 크리에이터의 영상, 클립, 아이디어를 한 피드에서 만나보세요. 피드는 2026년, 채널은 1996년.</p>
                   <div className="mt-4 flex flex-wrap gap-2">
                     <Link href="/videos" className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--panel-strong)] px-3.5 py-2 text-xs font-bold hover:bg-[var(--hover)]">
                       <Video className="h-4 w-4 text-[var(--accent)]" /> 영상 둘러보기
@@ -294,6 +323,32 @@ export default function SocialFeed() {
                   ))}
                 </div>
 
+                {tab === "discover" && (
+                  <div className="mb-4 rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-3 sm:p-4">
+                    <div className="mb-2 flex items-center justify-between gap-3">
+                      <span className="text-xs font-black text-[var(--foreground)]">관심사별 신호</span>
+                      <span className="text-[11px] text-[var(--muted)]">게시글 내용·태그 기준</span>
+                    </div>
+                    <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="관심사별 피드 필터">
+                      {INTEREST_FILTERS.map((filter) => (
+                        <button
+                          key={filter.key}
+                          type="button"
+                          aria-pressed={data.interest === filter.key}
+                          onClick={() => setData((prev) => ({ ...prev, interest: filter.key }))}
+                          className={"inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-bold transition " +
+                            (data.interest === filter.key
+                              ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)]"
+                              : "border-[var(--border)] bg-[var(--panel-strong)] text-[var(--muted)] hover:bg-[var(--hover)]")}
+                        >
+                          <span aria-hidden="true">{filter.emoji}</span>
+                          {filter.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {notice && (
                   <div role="status" className="mb-4 flex items-start justify-between gap-3 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-4 py-3 text-xs text-[var(--muted)]">
                     <span>{notice}</span>
@@ -304,9 +359,19 @@ export default function SocialFeed() {
                 {visible.length === 0 ? (
                   <div className="rounded-[26px] border border-[var(--border)] bg-[var(--panel)] p-10 text-center">
                     <Users className="mx-auto h-9 w-9 text-[var(--accent)]" />
-                    <h3 className="mt-3 text-lg font-black">{tab === "following" ? "아직 팔로잉한 채널이 없어요" : "저장한 게시글이 없어요"}</h3>
-                    <p className="mt-2 text-sm text-[var(--muted)]">발견 피드에서 크리에이터를 팔로우하거나 마음에 드는 글을 저장해 보세요.</p>
-                    <button onClick={() => setTab("discover")} className="mt-4 rounded-full bg-[var(--accent)] px-4 py-2 text-sm font-bold text-white">발견 피드로</button>
+                    <h3 className="mt-3 text-lg font-black">{tab === "discover"
+                      ? "이 관심사의 신호가 아직 없어요"
+                      : tab === "following" ? "아직 팔로잉한 채널이 없어요" : "저장한 게시글이 없어요"}</h3>
+                    <p className="mt-2 text-sm text-[var(--muted)]">{tab === "discover"
+                      ? "다른 관심사를 선택하거나 전체 피드에서 크리에이터를 발견해 보세요."
+                      : "발견 피드에서 크리에이터를 팔로우하거나 마음에 드는 글을 저장해 보세요."}</p>
+                    <button
+                      onClick={() => {
+                        if (tab === "discover") setData((prev) => ({ ...prev, interest: "all" }));
+                        else setTab("discover");
+                      }}
+                      className="mt-4 rounded-full bg-[var(--accent)] px-4 py-2 text-sm font-bold text-white"
+                    >{tab === "discover" ? "전체 신호 보기" : "발견 피드로"}</button>
                   </div>
                 ) : (
                   <div className="space-y-4">
